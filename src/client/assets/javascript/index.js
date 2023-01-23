@@ -11,6 +11,7 @@ let store = {
 document.addEventListener("DOMContentLoaded", function () {
 	onPageLoad()
 	setupClickHandlers()
+	console.log("doc loaded")
 })
 
 async function onPageLoad() {
@@ -38,6 +39,7 @@ function setupClickHandlers() {
 
 		// Race track form field
 		if (target.matches('.card.track')) {
+			console.log("hit")
 			handleSelectTrack(target)
 		}
 
@@ -75,11 +77,16 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView())
+	const tracks = await getTracks();
+	const currentTrack = tracks.filter(track => track.id == store.track_id);
+	renderAt('#race', renderRaceStartView(currentTrack, null))
 
 	// TODO - Get player_id and track_id from the store
+	const player_id = store.player_id;
+	const track_id = store.track_id;
 
 	// const race = TODO - invoke the API call to create the race, then save the result
+	const race = createRace(player_id, track_id)
 
 	// TODO - update the store with the race id
 	// For the API to work properly, the race id should be race id - 1
@@ -146,6 +153,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
+	store.player_id = target.id
 }
 
 function handleSelectTrack(target) {
@@ -161,6 +169,7 @@ function handleSelectTrack(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected track id to the store
+	store.track_id = target.id
 
 }
 
@@ -322,6 +331,12 @@ function defaultFetchOpts() {
 
 function getTracks() {
 	// GET request to `${SERVER}/api/tracks`
+	return fetch(`${SERVER}/api/tracks`, {
+		method: 'GET',
+		...defaultFetchOpts(),
+	})
+		.then(res => res.json())
+		.catch(err => console.log("Problem with getTracks request::", err))
 }
 
 function getRacers() {
@@ -331,7 +346,7 @@ function getRacers() {
 		...defaultFetchOpts(),
 	})
 		.then(res => res.json())
-		.catch(err => console.log("Problem with getRace request::", err))
+		.catch(err => console.log("Problem with getRacers request::", err))
 }
 
 function createRace(player_id, track_id) {
@@ -351,6 +366,12 @@ function createRace(player_id, track_id) {
 
 function getRace(id) {
 	// GET request to `${SERVER}/api/races/${id}`
+	return fetch(`${SERVER}/api/races/${id}`, {
+		method: 'GET',
+		...defaultFetchOpts(),
+	})
+		.then(res => res.json())
+		.catch(err => console.log("Problem with getRace request::", err))
 }
 
 function startRace(id) {
