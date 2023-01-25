@@ -90,19 +90,19 @@ async function handleCreateRace() {
 
 	// TODO - update the store with the race id
 	// For the API to work properly, the race id should be race id - 1
-	store.race_id = 0;
+	store.race_id = 1;
 
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
 	await runCountdown();
 
 	// TODO - call the async function startRace
-	await startRace(store.race_id)
+	await startRace(store.race_id - 1)
 	// TODO - call the async function runRace
-	runRace(store.race_id)
+	runRace(store.race_id - 1)
 }
 
-function runRace(raceID) {
+async function runRace(raceID) {
 	try {
 
 		return new Promise(resolve => {
@@ -111,7 +111,9 @@ function runRace(raceID) {
 				getRace(raceID)
 					.then(race => {
 						if (race.status === "in-progress") {
+							console.log(race);
 							console.log("in-progress")
+							renderAt('#leaderBoard', raceProgress(race.positions))
 						} else if (race.status === "finished") {
 							console.log("finished")
 						}
@@ -179,7 +181,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected racer to the store
-	store.player_id = target.id
+	store.player_id = parseInt(target.id)
 }
 
 function handleSelectTrack(target) {
@@ -402,7 +404,6 @@ function getRace(id) {
 }
 
 async function startRace(id) {
-	console.log('start Called')
 	return await fetch(`${SERVER}/api/races/${id}/start`, {
 		method: 'POST',
 		...defaultFetchOpts(),
@@ -410,8 +411,13 @@ async function startRace(id) {
 		.catch(err => console.log("Problem with getRace request::", err))
 }
 
-function accelerate(id) {
+async function accelerate(id) {
 	// POST request to `${SERVER}/api/races/${id}/accelerate`
 	// options parameter provided as defaultFetchOpts
 	// no body or datatype needed for this request
+	return await fetch(`${SERVER}/api/races/${id}/accelerate`, {
+		method: 'POST',
+		...defaultFetchOpts(),
+	})
+		.catch(err => console.log("Problem with getRace request::", err))
 }
