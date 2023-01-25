@@ -90,15 +90,14 @@ async function handleCreateRace() {
 
 	// TODO - update the store with the race id
 	// For the API to work properly, the race id should be race id - 1
-	store.race_id = 1;
+	store.race_id = 0;
 
 	// The race has been created, now start the countdown
 	// TODO - call the async function runCountdown
 	await runCountdown();
 
 	// TODO - call the async function startRace
-	console.log("got here")
-	startRace(store.race_id)
+	await startRace(store.race_id)
 	// TODO - call the async function runRace
 	runRace(store.race_id)
 }
@@ -402,12 +401,12 @@ function getRace(id) {
 		.catch(err => console.log("Problem with getRace request::", err))
 }
 
-function startRace(id) {
-	return fetch(`${SERVER}/api/races/${id}/start`, {
+async function startRace(id) {
+	console.log('start Called')
+	return await fetch(`${SERVER}/api/races/${id}/start`, {
 		method: 'POST',
 		...defaultFetchOpts(),
 	})
-		.then(console.log("race started"))
 		.catch(err => console.log("Problem with getRace request::", err))
 }
 
