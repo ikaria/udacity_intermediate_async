@@ -11,6 +11,7 @@ let store = {
 document.addEventListener("DOMContentLoaded", function () {
 	onPageLoad()
 	setupClickHandlers()
+	console.log("doc loaded")
 })
 
 async function onPageLoad() {
@@ -38,6 +39,7 @@ function setupClickHandlers() {
 
 		// Race track form field
 		if (target.matches('.card.track')) {
+			console.log("hit")
 			handleSelectTrack(target)
 		}
 
@@ -387,15 +389,15 @@ function getRace(id) {
 		.catch(err => console.log("Problem with getRace request::", err))
 }
 
-function startRace(id) {
-	return fetch(`${SERVER}/api/races/${id}/start`, {
+async function startRace(id) {
+	return await fetch(`${SERVER}/api/races/${id}/start`, {
 		method: 'POST',
 		...defaultFetchOpts(),
 	})
 		.catch(err => console.log("Problem with getRace request::", err))
 }
 
-function accelerate(id) {
+async function accelerate(id) {
 	// POST request to `${SERVER}/api/races/${id}/accelerate`
 	// options parameter provided as defaultFetchOpts
 	// no body or datatype needed for this request
