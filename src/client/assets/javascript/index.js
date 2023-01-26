@@ -116,6 +116,9 @@ async function runRace(raceID) {
 							renderAt('#leaderBoard', raceProgress(race.positions))
 						} else if (race.status === "finished") {
 							console.log("finished")
+							clearInterval(raceInterval) // to stop the interval from repeating
+							renderAt('#race', resultsView(race.positions)) // to render the results view
+							resolve(race) // resolve the promise
 						}
 					})
 
@@ -128,8 +131,8 @@ async function runRace(raceID) {
 				/* 
 					TODO - if the race info status property is "finished", run the following:
 			
-					clearInterval(raceInterval) // to stop the interval from repeating
-					renderAt('#race', resultsView(res.positions)) // to render the results view
+					clearinterval(raceinterval) // to stop the interval from repeating
+					renderat('#race', resultsview(res.positions)) // to render the results view
 					resolve(res) // resolve the promise
 				*/
 
@@ -204,6 +207,7 @@ function handleSelectTrack(target) {
 function handleAccelerate() {
 	console.log("accelerate button clicked")
 	// TODO - Invoke the API call to accelerate
+	accelerate(store.race_id - 1);
 }
 
 // HTML VIEWS ------------------------------------------------
